@@ -1,0 +1,17 @@
+{
+  "name": "CMI",
+  "version": "0.0.1",
+  "description": "Paquetes del frontend para el proyecto CMI.",
+  "moduleType": [
+    "globals"
+  ],
+  "authors": [
+    "Kenneth Aguilar Salas"
+  ],
+  "license": "MIT",
+  "homepage": "cmi.app",
+  "dependencies": {
+    "bootstrap": "~3.3.5",
+    "bootstrap-material-design": "~0.3.0"
+  }
+}
