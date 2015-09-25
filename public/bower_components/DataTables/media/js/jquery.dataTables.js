@@ -2777,7 +2777,7 @@
 		var language = settings.oLanguage;
 		var previousSearch = settings.oPreviousSearch;
 		var features = settings.aanFeatures;
-		var input = '<input type="search" class="'+classes.sFilterInput+'"/>';
+		var input = '<input type="search" class="form-control floating-label"/>';
 	
 		var str = language.sSearch;
 		str = str.match(/_INPUT_/) ?
@@ -2813,7 +2813,7 @@
 		var searchDelay = settings.searchDelay !== null ?
 			settings.searchDelay :
 			_fnDataSource( settings ) === 'ssp' ?
-				400 :
+				300 :
 				0;
 	
 		var jqFilter = $('input', filter)
@@ -3410,7 +3410,7 @@
 			lengths  = d2 ? menu[0] : menu,
 			language = d2 ? menu[1] : menu;
 	
-		var select = $('<select/>', {
+		var select = $('<select class="form-control"/>', {
 			'name':          tableId+'_length',
 			'aria-controls': tableId,
 			'class':         classes.sLengthSelect
@@ -9951,7 +9951,7 @@
 		 *      } );
 		 *    } );
 		 */
-		"aLengthMenu": [ 10, 25, 50, 100 ],
+		"aLengthMenu": [ 10, 50, 25, 100 ],
 	
 	
 		/**
@@ -11413,7 +11413,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sLengthMenu": "Mostrar _MENU_ indicadores",
+			"sLengthMenu": "Mostrar _MENU_",
 	
 	
 			/**
@@ -11493,7 +11493,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sSearch": "Buscar indicador:",
+			"sSearch": "",
 	
 	
 			/**
@@ -11504,7 +11504,7 @@
 			 *  @dtopt Language
 			 *  @name DataTable.defaults.language.searchPlaceholder
 			 */
-			"sSearchPlaceholder": "ind-n",
+			"sSearchPlaceholder": "Buscar indicador",
 	
 	
 			/**

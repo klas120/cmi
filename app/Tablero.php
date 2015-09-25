@@ -15,73 +15,212 @@ private $lastsState;
 private $colorValues;
 private $colometric; 
 
+public static function prueba($ind, $idUser){
+  $ind = 'ind-77';
+  $idUser = 205980050;
+  $val1 = ''; //2012;
+  $val2 = ''; //85.5;
+ // $feed = \DB::select('call pkg_cmi_indicators.proc_calc_multiperiod_all(?,?,?)',[$ind, $val1, $val2]);
+
+  $graficDates = [];
 
 
-  public static function tableroControl2($userID = 0){
+  
+  // OBTIENE LOS VALORES PARA MOSTRAR Y RELACIONAR OTROS DATOS.
+  $indicator = \DB::select('select PKG_CMI_CONTROLVIEW.FUNC_GET_INDICATOR(?, ?) from dual',[$ind, $idUser]);
+  //dd($indicator);
 
-    $idUser     = '205980050';//  = '0206380517'; //603570183 205980050 9999999  0205370500 0205420005;
 
+
+  // LLAMA A LA FUNCIÓN PARA OBTENER TODOS LOS DATOS ALIMENTADOS, PARA LUEGO SER CONTADOS Y SUMADOS.
+  $lastStateGrafic = \DB::select('select PKG_CMI_INDICATOR_STATES.FUNC_GET_LASTSSTATEGRAFIC(?) from dual',[$ind]);
+  //dd($lastStateGrafic);
+
+  // TOMA EL RESULTADO DE LA FUNCIÓN ANTERIOR PARA CONTARLOS.
+  $countStates = count($lastStateGrafic);
+ //dd($countStates);
+
+ $sumStates=0;
+  foreach ($lastStateGrafic as $value) {
+   $sumStates = $sumStates + $value->actualvalue;
+  
+    //dd($value->actualvalue);
+  } 
+  //dd($sumStates);
+  
+  // FUNCIÓN PARA OBTENER ÚNICAMENTE LA COLORIMETRÍA EN QUE SE ENCUENTRA EL INDICADOR.
+  $colorValue = \DB::select('select PKG_CMI_COLORVALUE.FUNC_GET_COLORVALUE(?) from dual',[$indicator[0]->actuallevel]);
+   //dd($colorValue);
+  
+  // FUNCIÓN QUE OBTIENE EL NOMBRE Y EL APELLIDO DEL ADMINISTRADOR.
+  $nameAdmin = \DB::select('select PKG_CMI_EMPLOYEES.FUNC_GET_EMPLOYEENOTRELATED(?) from dual',[$indicator[0]->administrator ]);
+  //dd($colorValue);
+  
+
+   array_push($graficDates, [ 
+                              'indicator' => $indicator, 
+                              'lastStateGrafic' => $lastStateGrafic, 
+                              'colorValue' => $colorValue, 
+                              'nameAdmin' => $nameAdmin
+                            ]);
+  
+
+  //dd($graficDates);
+   return [$indicator, $lastStateGrafic, $colorValue, $nameAdmin];
+}
+
+
+
+
+
+
+
+
+
+
+
+public static function feedingIndicator($stateid, $val, $userName){
+
+
+  /*$user = 'lnunez';
+  $val = 58.66;
+  $stateid = 25619; */
+
+  //ALIMENTA UN ESTADO DEL INDICADOR.
+  $feed = \DB::statement('call PKG_CMI_INDICATOR_STATES.PROC_MAKE_FEED(?,?,?)',[$stateid, $val, $userName]);
+
+}
+
+
+public static function callStatesIndicator($ind){
+  
+ 
+  //$p = \DB::statement('call PKG_CMI_INDICATOR_STATES.PROC_MAKE_FEED(?,?,?)',[$stateid, $val, $user]);
+  
+  //$p = \DB::exec('pkg_cmi_indicator_states.func_get_valid_fees(?, ?, ?)',[$ind, $per, $user]);
+  //$p= \DB::table('select * from CMI_INDICATOR_STATE t where t.indicatorid = '.$ind.';');
+ 
+
+
+ $datasStates= \DB::table('CMI_INDICATOR_STATE')->select('*')->where('indicatorid', '=',  $ind)->get();  
+   
+ return $datasStates;
+}
+
+
+public static function callDatasIndicator($ind){  
+
+
+//Obtiene todos los datos de un indicador en especifico.
+//getIndicator(String indicatorID)
+$datasIndicator = \DB::select('select PKG_CMI_INDICATORS.FUNC_GET_INDICATOR(?) from dual',[$ind]);  
+ 
+ return $datasIndicator;
+}
+
+  
+
+public static function defaultControlViewsOfUser($userIndicators){
+
+  // $retornar = Tablero::tableroControl();
+  // return $retornar[0]['indicatorid'];
+
+
+ $idUser     = '205980050';
+
+    // OBTIENE TODOS LOS INDICADORES DEL USUARIO.
+     //$userIndicators     = Tablero::allIndicatorsOfUser();
+
+    // OBTIENE LOS TABLEROS POR DEFAULT DEL USUARIO.
+    $userDefaultControlViewS = \DB::select('select PKG_CMI_CONTROLVIEW.FUNC_GET_CONTROLVIEWS(?) from dual', [ $idUser ]);
     
 
+    $arrayIndicators = []; // = array(); //= [];
+    $i=0;
 
-    $userIndicators     = \DB::table('select PKG_CMI_CONTROLVIEW.FUNC_GET_USERINDICATOR(?) from dual', [ $idUser ]);
-     
-     $i = 0;      
+  // BUCLE QUE OBTIENE LOS TABLEROS POR DEFAULT.
+  foreach ($userDefaultControlViewS as $userDefaultControlView) {
 
-   foreach ($userIndicators as $userIndicator) {
+      // OBTIENE LOS INDICADORES DEL TABLERO.
+      $userIndicatorsOfCV  = \DB::select('select PKG_CMI_CONTROLVIEW.FUNC_GET_INDICATORSofCV(?,?) from dual', [
+                                                                                                                $idUser, 
+                                                                                                                $userDefaultControlView->controlviewid
+                                                                                                              ]);
+    
+      // BUCLE QUE OBTIENE LOS INDICADORES DE CADA TABLERO.
+     foreach ($userIndicatorsOfCV  as $userIndicatorsCV) {
+       // BUCLE QUE OBTIENE TODOS LOS INDICADORES DEL USUARIO REGISTRADO.
+        foreach ($userIndicators as $userIndicator) {
+          //return $userIndicator;
 
-       $employeeNoRelated = \DB::table('select PKG_CMI_EMPLOYEES.FUNC_GET_EMPLOYEENOTRELATED(?) from dual', [ $idUser ]);
-       $faculty           = \DB::table('select PKG_CMI_FACULTIES.FUNC_GET_FACULTY(?) from dual',            [ $employeeNoRelated[0]->facultyid ]);
-       $lastsState        = \DB::table('select PKG_CMI_INDICATOR_STATES.FUNC_GET_LASTSSTATE(?) from dual',  [ $userIndicator->indicatorid ]);
-       $colorValues       = \DB::table('select PKG_CMI_COLORMETRIC.FUNC_GET_COLORVALUES(?) from dual',      [ $userIndicator->colormetricid ]);
-       $colometric        = \DB::table('select PKG_CMI_COLORMETRIC.FUNC_GET_COLORMETRIC(?) from dual',      [ $userIndicator->colormetricid ]); 
-     
+            // COMPARA LOS INDICADORES DEL TABLERO CON LOS DEL USUARIO, PARA ALMACENARLOS Y RETORNARLOS.
+            if ($userIndicatorsCV->indicatorid == $userIndicator['indicatorid']) {
 
-    $tablero[$i++] = [
-                      'userIndicator'    =>$userIndicator,
-                      'employeeNoRelated'=>$employeeNoRelated , 
-                      'faculty'          =>$faculty , 
-                      'lastsState'       =>$lastsState , 
-                      'colorValues'      =>$colorValues , 
-                      'colometric'       =>$colometric                       
-                    ]; 
+                //FUNCION PARA IR AGREGANDO LOS INDICADORES.                
+                array_push($arrayIndicators, [
+                                               'nameControlView'     =>  $userDefaultControlView->controlviewname,
+                                               'defaultControlView'  =>  $userDefaultControlView->defaultcv,
+                                               'indicatorid'         =>  $userIndicator['indicatorid'],
+                                               'indicatorname'       =>  $userIndicator['indicatorname'],
+                                               'categoryname'        =>  $userIndicator['categoryname'],
+                                               'updatefrq'           =>  $userIndicator['updatefrq'],
+                                               'score'               =>  $userIndicator['score'],
+                                               'actualvalue'         =>  $userIndicator['actualvalue'],
+                                               'colometric'          =>  $userIndicator['colometric'],
+                                               'desirevalue'         =>  $userIndicator['desirevalue'],
+                                               'averageColor1'       =>  $userIndicator['averageColor1'],
+                                               'lastsState_0_score'  =>  $userIndicator['lastsState_0_score'],
+                                               'lastsState_1_score'  =>  $userIndicator['lastsState_1_score'],
+                                               'lastsState_2_score'  =>  $userIndicator['lastsState_2_score'],
+                                               'lastsState_3_score'  =>  $userIndicator['lastsState_3_score'],
+                                               'colometricAverage'   =>  $userIndicator['colometricAverage'],
+                                               'averageColor2'       =>  $userIndicator['averageColor2']
+                                               
+                                            ]); 
+            }
 
-     }
+            # code...
+          }
+          
+        }
 
-   return $tablero;    
- }
+    }    
 
+  return $arrayIndicators;
 
-
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
- /*------------------------------------------------------------------------------------------------------*/
+}
 
 
- public static function tableroControl(){
 
-  $idUser     = '205980050';//  = '0206380517'; //603570183 205980050 9999999  0205370500 0205420005;
 
+
+ public static function allIndicatorsOfUser(){
+
+  $idUser     = '205980050';
+
+
+  // OBTIENE TODOS LOS INDICADORES DEL USUARIO.
   $userIndicators     = \DB::select('select PKG_CMI_CONTROLVIEW.FUNC_GET_USERINDICATOR(?) from dual', [ $idUser ]);
+  // OBTIENE LOS DATOS PERSONALES DEL USUARIO Y FACULTAD.
+  $employeeNoRelated = \DB::select('select PKG_CMI_EMPLOYEES.FUNC_GET_EMPLOYEENOTRELATED(?) from dual', [ $idUser ]);
+  
 
    $tablero;
    $i = 0;   
  
-
+ // BUCLE QUE OBTIENE CADA INDICADOR DEL USUARIOS REGISTRADO.
  foreach ($userIndicators as $userIndicator) {
 
-     $employeeNoRelated = \DB::select('select PKG_CMI_EMPLOYEES.FUNC_GET_EMPLOYEENOTRELATED(?) from dual', [ $idUser ]);
+     // CONSULTAS QUE OBTIENEN LOS DATOS DE UN INDICADOR ESPECIFICO.
      $faculty           = \DB::select('select PKG_CMI_FACULTIES.FUNC_GET_FACULTY(?) from dual',            [ $employeeNoRelated[0]->facultyid ]);
      $lastsState        = \DB::select('select PKG_CMI_INDICATOR_STATES.FUNC_GET_LASTSSTATE(?) from dual',  [ $userIndicator->indicatorid ]);
      $colorValues       = \DB::select('select PKG_CMI_COLORMETRIC.FUNC_GET_COLORVALUES(?) from dual',      [ $userIndicator->colormetricid ]);
      $colometric        = \DB::select('select PKG_CMI_COLORMETRIC.FUNC_GET_COLORMETRIC(?) from dual',      [ $userIndicator->colormetricid ]);
+     $averageColor      = \DB::select('select PKG_CMI_COLORVALUE.FUNC_GET_COLORVALUE(?) from dual',        [ $userIndicator->actuallevel ] );
 
 
     //Define la colometría para el campo colorimetría de la tabla.
+    /* 
     $averageColor1 = '';
 
    if ( ($userIndicator->actualvalue >= $colorValues[0]->initialvalue) && ($userIndicator->actualvalue <= $colorValues[0]->lastvalue) ) {
@@ -95,7 +234,7 @@ private $colometric;
    }else{
      $averageColor1 = 'N/A';
    }
-   
+   */
    
    /*--------------------------------------------------
      //PRUEBA PARA CADA INDICADOR
@@ -258,6 +397,11 @@ private $colometric;
    
  //Arreglo de indicadores para la el tablero de control
   $tablero[$i++] = [
+                    'employeeID'         => $employeeNoRelated[0]->employeeid,
+                    'firstName'          => $employeeNoRelated[0]->firstname,
+                    'lastName'           => $employeeNoRelated[0]->lastname,
+                    'employeeActive'     => $employeeNoRelated[0]->active,
+
                     'indicatorid'        => $userIndicator->indicatorid, 
                     'indicatorname'      => $userIndicator->indicatorname, 
                     'categoryname'       => $userIndicator->categoryname, 
@@ -266,24 +410,22 @@ private $colometric;
                     'actualvalue'        => $userIndicator->actualvalue, 
                     'colometric'         => $colometric[0]->metricname, 
                     'desirevalue'        => $userIndicator->desirevalue, 
-                    'averageColor1'      => $averageColor1, 
+
+                    'averageColor1'      => $averageColor[0]->color, 
+
                     'lastsState_0_score' => round($lastsState_0_score, 2),
                     'lastsState_1_score' => round($lastsState_1_score, 2),
                     'lastsState_2_score' => round($lastsState_2_score, 2),
                     'lastsState_3_score' => round($lastsState_3_score, 2),
                     'colometricAverage'  => round($colometricAverage, 2),
                     'averageColor2'      => $averageColor2 
-                  ];
-  
- 
+                  ]; 
+
+     }
+   
+   return $tablero;  
 
    }
-
- //return json_encode($tablero);
- return $tablero;
-  
-
- }
 
 
 }

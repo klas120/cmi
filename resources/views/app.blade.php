@@ -6,18 +6,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>@section('title') CMI @show</title>
 
-	{!! Html::style('bower_components/bootstrap/dist/css/bootstrap.min.css') !!}
-	{!! Html::style('bower_components/bootstrap-material-design/dist/css/material.min.css') !!}
-	{!! Html::style('bower_components/bootstrap-material-design/dist/css/ripples.min.css') !!}
+	{!! Html::style('bower_components/bootstrap/css/bootstrap.min2.css') !!}
+	{!! Html::style('bower_components/bootstrap-material-design-master/dist/css/material.min.css') !!}
+	{!! Html::style('bower_components/bootstrap-material-design-master/dist/css/ripples.min.css') !!}
 	<!-- RIPPLES.CSS MANEJA LAS OPCIONES DEL FOOTER -->
-	{!! Html::style('bower_components/bootstrap-material-design/dist/css/ripples.css') !!}
-	{!! Html::style('bower_components/bootstrap-material-design/dist/css/material-wfont.min.css') !!}	
-	{!! Html::style('bower_components/bootstrap-material-design/dist/css/fonts-google.css') !!}	
+	<!-- {!! Html::style('bower_components/bootstrap-material-design/dist/css/ripples.css') !!} -->
+	{!! Html::style('bower_components/bootstrap-material-design-master/dist/css/material-wfont.min.css') !!}	
+	{!! Html::style('bower_components/bootstrap-material-design-master/dist/css/fonts-google.css') !!}	
 	{!! Html::style('bower_components/sweetalert/dist/sweetalert.css') !!}	
 
 	<!-- DataTables CSS -->
-	<link rel="stylesheet" type="text/css" href="bower_components/DataTables/media/css/jquery.dataTables.css">
-	  
+	<!-- <link rel="stylesheet" type="text/css" href="bower_components/DataTables/media/css/jquery.dataTables.css"> -->
+	  {!! Html::style('bower_components/DataTables/media/css/jquery.dataTables.css') !!}  
+
+
+	  <!-- tabs -->
+	  <!-- {!! Html::style('bower_components/tabs/bootstrap.min.css') !!} -->
 	
 
 	<!--{!! Html::style('bower_components/bootstrap-sweetalert/assets/docs.css') !!}-->
@@ -34,7 +38,7 @@
 		<![endif]-->
 	</head>
 	<body>
-		<nav class="navbar navbar-default">
+		<nav class="navbar navbar-primary">
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -44,35 +48,35 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="http://www.avantica.net/es/">
-						<img width="100" height="30" src="bower_components/sweetalert/example/images/logo1.png">
+						<img width="75" height="20" src="bower_components/sweetalert/example/images/avanticalogo.png">
 					</a>
 				</div>
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav">
-						<li><a href="{{ url('/') }}">Inicio</a></li>
-					</ul>
+					
 					@if (Auth::check())
-					<ul class="nav navbar-nav">
-						<li><a href="{{ url('/terceros') }}">Usuarios</a></li>
-						<li><a href="{{ url('/terceros') }}">Alquiler</a></li>
-						<li><a href="{{ url('/terceros') }}">Cilindro</a></li>
-						<li><a href="{{ url('/terceros') }}">LLenado</a></li>
-					</ul>
-					@endif
+
+						<ul class="nav navbar-nav">
+							<li><a href="{{ url('/tablero') }}">Tablero de Control</a></li>						
+						</ul>
+
+						<ul class="nav navbar-nav">						
+							<li><a href="{{ url('/estrategico') }}">Plan Estratégico</a></li>
+						</ul>
+
+					@endif					
 
 					<ul class="nav navbar-nav">
-						<li><a href="{{ url('/auth/logout') }}">Cerrar Sesión</a></li>
+						<li><a href="{{ url('/tablero') }}">Tablero de Control</a></li>						
 					</ul>
 
 					<ul class="nav navbar-nav">
-						<li><a href="{{ url('/tablero') }}">Tablero de Control</a></li>
+						<li><a href="{{ url('/estrategico') }}">Plan Estratégico</a></li>
 					</ul>
 
 					<ul class="nav navbar-nav navbar-right">
 						@if (Auth::guest())
-						<li><a href="{!! url('/auth/login') !!}">Loguearse</a></li>
-						<li><a href="{!! url('/auth/register') !!}">Registrarse</a></li>
+							<li><a href="#">Loguearse</a></li>						
 						@else
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -81,11 +85,11 @@
 									<li><a href="{!! url('/auth/logout') !!}">Cerrar Sesión</a></li>
 								</ul>
 							</li>
-							@endif
-						</ul>
-					</div>
+						@endif
+					</ul>
 				</div>
-			</nav>
+			</div>
+		</nav>
 
 			<div class="container-fluid">
 				@yield('content')
@@ -93,65 +97,82 @@
 
 
 			<!-- Scripts -->
-
+			
 			{!! Html::script('bower_components/jquery/dist/jquery.min.js') !!}
 			{!! Html::script('bower_components/jquery/dist/js/bootstrap.min.js') !!}
-			{!! Html::script('bower_components/bootstrap-material-design/dist/js/ripples.min.js') !!}
-			{!! Html::script('bower_components/bootstrap-material-design/dist/js/material.min.js') !!}	
-			{!! Html::script('bower_components/sweetalert/dist/sweetalert.min.js') !!}	
+			{!! Html::script('bower_components/bootstrap-material-design-master/dist/js/ripples.min.js') !!}
+			{!! Html::script('bower_components/bootstrap-material-design-master/dist/js/material.min.js') !!}	
+			{!! Html::script('bower_components/sweetalert/dist/sweetalert.min.js') !!}
+
+			<!-- datatables -->	
+			{!! Html::script('bower_components/DataTables/media/js/jquery.js') !!}
+			{!! Html::script('bower_components/DataTables/media/js/jquery.dataTables.js') !!}
+
+			<!-- Tabs -->
+			<!-- {!! Html::script('bower_components/tabs/jquery.min.js') !!} -->
+			{!! Html::script('bower_components/tabs/bootstrap.min.js') !!}
+			
+
+			{!! Html::script('C:bower_components/bootstrap/js/jquery-tooltip.min') !!}
+			{!! Html::script('C:bower_components/bootstrap/js/bootstrap.min.js') !!}
+
+
+			<!-- jQuery -->
+			<!-- <script type="text/javascript" charset="utf8" src="bower_components/DataTables/media/js/jquery.js"></script> -->				  
+			<!-- DataTables -->
+			<!-- <script type="text/javascript" charset="utf8" src="bower_components/DataTables/media/js/jquery.dataTables.js"></script> -->
+
 
 
 	<!--
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.1/js/bootstrap.min.js"></script>
--->
+    -->
 
-<!-- INICIALIZA MATERIAL DESIGN -->
+<!-- INICIALIZA VARIAS FUNCIONES DEL PROYECTO CMI -->
 <script type="text/javascript">
+
+//FUNCION PARA QUE INICIALIZA BOOTSTRAP-MATERIAL-DESIGN.
 $(document).on('ready', function(){
 	$.material.init();
 });
+
 </script>
 
-
-<!-- jQuery -->
-	<script type="text/javascript" charset="utf8" src="bower_components/DataTables/media/js/jquery.js">
-
-	</script>
-	  
-	<!-- DataTables -->
-	<script type="text/javascript" charset="utf8" src="bower_components/DataTables/media/js/jquery.dataTables.js"></script>
-
-
+  <script>
+  //FUNCION PARA EL USO DE TOGGLE.
+  $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();   
+  });
+</script>
 
 
 
 <script >
-		$(document).ready(function() {
-		    /*// Setup - add a text input to each footer cell
-		    $('#tablero tfoot th').each( function () {
-		        var title = $('#tablero thead th').eq( $(this).index() ).text();
-		        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-		    } );*/
-		 
-		    // DataTable
-		    var table = $('#tablero').DataTable();
-		 
-		    // Apply the search
-		    table.columns().every( function () {
-		        var that = this;
-		 
-		        /*$( 'input', this.footer() ).on( 'keyup change', function () {
-		            that
-		                .search( this.value )
-		                .draw();
-		        } );*/
-		    } );
-		} );
+
+	$(document).ready(function() {
+	    // Setup - add a text input to each footer cell
+	    $('#tablero tfoot th').each( function () {
+	        var title = $('#tablero thead th').eq( $(this).index() ).text();
+	        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+	    } );
+	 
+	    // DataTable
+	    var table = $('#tablero').DataTable();
+	 
+	    // Apply the search
+	    table.columns().every( function () {
+	        var that = this;
+	 
+	        $( 'input', this.footer() ).on( 'keyup change', function () {
+	            that
+	                .search( this.value )
+	                .draw();
+	        } );
+	    } );
+	} );		
+
 </script>
-
-
-
 
 <!-- FUNCIONES Y VARIABLES PARA SWEET-ALERT -->
 <script>	

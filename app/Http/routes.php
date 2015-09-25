@@ -20,31 +20,61 @@ Route::controllers([
 	'password' => 'Auth\PasswordController',
 	]);
 
-Route::get('tablero', 'TableroController@getMostrar');
+//resource('tablero','TableroController');
 
+Route::get('tablero/{id?}', [
+	'as' => 'mostrar_tablero',
+	'uses' => 'TableroController@getMostrar'
+	]);
+
+Route::post('llamarTablero', [
+	'as' => 'llamarTablero',
+	'uses' => 'TableroController@llamarTablero'
+	]);
+
+//resource('VerURI','TableroController');
+
+Route::get('alimentar/{id}', [
+	'as' => 'alimentar',
+	'uses' => 'TableroController@findStates'
+	]);
+
+Route::get('alimentar/estado/{stateId}/{value}/{user}', [
+	'as' => 'alimentar_estado',
+	'uses' => 'TableroController@feedStates'
+	]);
+
+Route::get('graficos/estado/{indId}/{userId}', [
+	'as' => 'mostrar_graficos',
+	'uses' => 'TableroController@showGrafic'
+	]);
+
+
+
+//Route::get('tablero', 'TableroController@getMostrar');
 
 
 
 /* 	RUTAS DE EJEMPLO PARA CMI   -----------------------------------------
  * ----------------------------------------------------------------------
- 						INICIO
+ 						        INICIO
  * ----------------------------------------------------------------------
  */
-resource('terceros','TerceroController');
+// resource('terceros','TerceroController');
 
-Route::post('actualizar-tercero/{id}', [
-	'as' => 'actualizar_tercero',
-	'uses' => 'TerceroController@update'
-	]);
+// Route::post('actualizar-tercero/{id}', [
+// 	'as' => 'actualizar_tercero',
+// 	'uses' => 'TerceroController@update'
+// 	]);
 
-Route::get('terceros', 'TerceroController@index');
-Route::get('terceros/{id}/edit', 'TerceroController@edit');
-Route::get('terceros/{id}/delete', 'TerceroController@destroy');
+// Route::get('terceros', 'TerceroController@index');
+// Route::get('terceros/{id}/edit', 'TerceroController@edit');
+// Route::get('terceros/{id}/delete', 'TerceroController@destroy');
 
-Route::get('terceros_mostrar', 'TerceroController@mostrar');
+// Route::get('terceros_mostrar', 'TerceroController@mostrar');
 
 /* ---------------------------------------------------------------------
-						FIN  
+						        FIN  
  * ---------------------------------------------------------------------
  * ---------------------------------------------------------------------
  */

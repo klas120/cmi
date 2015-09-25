@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Input;
+use Redirect;
 use Illuminate\Http\Request;
 use App\Tablero;
 use App\Http\Requests;
@@ -22,23 +23,142 @@ class TableroController extends Controller
         //
     }
 
-     public function getMostrar()
-    {        
-        
-        
-        $indicadores = Tablero::tableroControl();  
 
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function feedStates($stateid, $val, $userName)
+    {
+      Tablero::feedingIndicator($stateid, $val, $userName);   
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+    public function findStates($id)
+    {      
+         //dd($id);
+      $callStatesIndicators = Tablero::callStatesIndicator($id);
+      $callDatasIndicators = Tablero::callDatasIndicator($id);
+
+      //dd($states[1]['datasStates'][0]->stateid);
+      //dd($states[0]['datasIndicator'][0]->indicatorid);
+      //$states->orderBy('stateid', 'asc')->paginate(10);
+
+         return view('feed', [
+                               'callStatesIndicators' => $callStatesIndicators, 
+                               'callDatasIndicators'  => $callDatasIndicators, 
+                               'id'                  => $id
+                             ]);
+    }
+
+
+    // RECIBE EL ID DE SELECT Y REDIRECCIONA A GETMOSTRAR PARA OPTENER EL TABLERO.
+    public function llamarTablero(){
+
+      $prueba = Input::get('tabla');
+           //dd($prueba);
+      return Redirect::action('TableroController@getMostrar',['tablero'=>$prueba]);
+    }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+     public function showGrafic($tablero='')
+     { 
+       // TOMA EL RESULTADO DE LA FUNCIÓN ANTERIOR PARA CONTARLOS.
+       $countStates = count($lastStateGrafic);
+      //dd($countStates);
+
+       $sumStates=0;
+       foreach ($lastStateGrafic as $value) {
+          $sumStates = $sumStates + $value->actualvalue;       
+         //dd($value->actualvalue);
+       } 
+       //dd($sumStates) 
+     }
+
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return Response
+     */
+     public function getMostrar($tablero='')
+    {   
+
+        $test = Tablero::prueba('ind-77', 205980050);
+
+        dd($test[2]);
+
+        // OBTIENE DATOS DEL MODELO TABLERO.
+        $allIndicators = Tablero::allIndicatorsOfUser();  
+        $allControlviews = Tablero::defaultControlViewsOfUser($allIndicators);         
         
-        //$resultado8['employeeNoRelated'][0]->employeeid;    
-        //dd( $indicadores[0]['indicatorid'] );
-        //dd( $indicadores[0]['userIndicator']->indicatorid );   
-        //dd( $indicadores[1]['employeeNoRelated'] );   
+        $indicadores = [];
+        $selectControlviews  = [];
+
+        array_push($selectControlviews, $allControlviews[0]['nameControlView']);
+        $aux1 = $allControlviews[0]['nameControlView'];
+        $aux2 = $allControlviews[0]['nameControlView'];
         
-        //dd($indicadores);       
+
+        foreach ($allControlviews as $allControlview) { 
+
+            $i=0;
+
+          // CONSULTA SI EL PARAMETRO VIENE VACIO PARA OBTENER EL TABLERO POR DEFAULT.
+          if ($tablero == '') {
+            if ($allControlview['defaultControlView'] == 1) {
+               array_push($indicadores, $allControlview);
+            }
+           // SI EL PARAMETRO NO VIENE VACIO OBTIENE EL TABLERO POR PARAMETRO. 
+          }elseif ($allControlview['nameControlView'] == $tablero) {
+            array_push($indicadores, $allControlview);
+          }
+
+          // OBTIENE LOS NOMBRES DE LOS TABLEROS PARA ENVIARLOS A LA VISTA.
+          if ($aux1 != $aux2) {            
+            array_push($selectControlviews, $allControlview['nameControlView']);            
+            $aux2 = $allControlview['nameControlView'];
+            $aux1 =   $allControlview['nameControlView'];
+          }else{
+            $aux1 =   $allControlview['nameControlView'];             
+          }
+
+         # FIN DEL FOR
+        }  
+
+       //dd($selectControlviews);
        
-       return view( 'tablero', compact('indicadores') );      
+        return view( 'tablero', [
+                                  'indicadores' => $indicadores, 
+                                  'selectControlviews' => $selectControlviews
+                                ]);      
         
     }
+
+
+     /**
+     * Show the form for creating a new resource.
+     *
+     * @return Response
+     */
+    public function findControView()
+    {
+        //
+    }
+
+
 
     /**
      * Show the form for creating a new resource.
